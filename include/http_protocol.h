@@ -747,6 +747,28 @@ AP_DECLARE_HOOK(int,protocol_propose,(conn_rec *c, request_rec *r,
                                       apr_array_header_t *proposals))
 
 /**
+ * This hook allows modules to affect a request-triggered (r != NULL) protocol
+ * switch before any upgrade response is sent and the protocol_switch hook is
+ * run. This hook is not run for connection-level protocol switches.
+ *
+ * r->headers_out is cleared before this hook is called. Modules may choose to
+ * add their own headers, which will be sent during the 101 intermediate
+ * response to HTTP/1.1 upgrades.
+ *
+ * Modules may return an HTTP error code to abort the protocol switch, for
+ * example in response to a malformed Upgrade attempt.
+ *
+ * @param c The current connection
+ * @param r The current request
+ * @param s The server/virtual host selected
+ * @param protocol The new protocol identifier
+ * @return OK, DECLINED, or HTTP_...
+ */
+AP_DECLARE_HOOK(int,pre_protocol_switch,(conn_rec *c, request_rec *r,
+                                         server_rec *s,
+                                         const char *protocol))
+
+/**
  * Perform a protocol switch on the connection. The exact requirements for
  * that depend on the protocol in place and the one switched to. The first 
  * protocol module to handle the switch is the last module run.

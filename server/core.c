@@ -5037,10 +5037,21 @@ static int core_upgrade_handler(request_rec *r)
             if (offers && offers->nelts > 0) {
                 const char *protocol = ap_select_protocol(c, r, NULL, offers);
                 if (protocol && strcmp(protocol, ap_get_protocol(c))) {
+                    int rc;
+
                     ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, APLOGNO(02909)
                                   "Upgrade selects '%s'", protocol);
-                    /* Let the client know what we are upgrading to. */
                     apr_table_clear(r->headers_out);
+
+                    /* Allow modules to run checks on the upgrade, add response
+                     * headers, fail if necessary, etc.
+                     */
+                    rc = ap_run_pre_protocol_switch(c, r, r->server, protocol);
+                    if ((rc != DECLINED) && (rc != OK)) {
+                        return rc;
+                    }
+
+                    /* Let the client know what we are upgrading to. */
                     apr_table_setn(r->headers_out, "Upgrade", protocol);
                     apr_table_setn(r->headers_out, "Connection", "Upgrade");
                     

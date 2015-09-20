@@ -68,6 +68,7 @@ APR_HOOK_STRUCT(
     APR_HOOK_LINK(default_port)
     APR_HOOK_LINK(note_auth_failure)
     APR_HOOK_LINK(protocol_propose)
+    APR_HOOK_LINK(pre_protocol_switch)
     APR_HOOK_LINK(protocol_switch)
     APR_HOOK_LINK(protocol_get)
 )
@@ -2024,6 +2025,10 @@ AP_IMPLEMENT_HOOK_RUN_ALL(int,protocol_propose,
                            const apr_array_header_t *offers,
                            apr_array_header_t *proposals), 
                           (c, r, s, offers, proposals), OK, DECLINED)
+AP_IMPLEMENT_HOOK_RUN_ALL(int,pre_protocol_switch,
+                          (conn_rec *c, request_rec *r, server_rec *s,
+                           const char *protocol),
+                          (c, r, s, protocol), OK, DECLINED)
 AP_IMPLEMENT_HOOK_RUN_FIRST(int,protocol_switch,
                             (conn_rec *c, request_rec *r, server_rec *s,
                              const char *protocol), 
