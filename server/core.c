@@ -5019,6 +5019,11 @@ static int core_upgrade_handler(request_rec *r)
          * connection. */
         return DECLINED;
     }
+
+    if (r->proto_num < HTTP_VERSION(1, 1)) {
+        /* Upgrade requires at least HTTP/1.1. */
+        return DECLINED;
+    }
     
     upgrade = apr_table_get(r->headers_in, "Upgrade");
     if (upgrade && *upgrade) {
