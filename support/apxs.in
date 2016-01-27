@@ -168,21 +168,21 @@ $name = $opt_n if ($opt_n ne '');
 if (@opt_S) {
     my ($opt_S);
     foreach $opt_S (@opt_S) {
-	if ($opt_S =~ m/^([^=]+)=(.*)$/) {
-	    my ($var) = $1;
-	    my ($val) = $2;
-	    my $oldval = eval "\$CFG_$var";
+        if ($opt_S =~ m/^([^=]+)=(.*)$/) {
+            my ($var) = $1;
+            my ($val) = $2;
+            my $oldval = eval "\$CFG_$var";
 
-	    unless ($var and $oldval) {
-		print STDERR "apxs:Error: no config variable $var\n";
-		&usage;
-	    }
+            unless ($var and $oldval) {
+                print STDERR "apxs:Error: no config variable $var\n";
+                &usage;
+            }
 
-	    eval "\$CFG_${var}=\"${val}\"";
-	} else {
-	    print STDERR "apxs:Error: malformatted -S option\n";
-	    &usage;
-	}	
+            eval "\$CFG_${var}=\"${val}\"";
+        } else {
+            print STDERR "apxs:Error: malformatted -S option\n";
+            &usage;
+        }
     }
 }
 
@@ -302,27 +302,27 @@ if ($opt_g) {
 
 if ($opt_q) {
     ##
-    ##  QUERY INFORMATION 
+    ##  QUERY INFORMATION
     ##
     my $result;
-    if ($#args >= 0) { 
+    if ($#args >= 0) {
         $result = get_vars(@args);
         print "$result\n";
     } else {
         # -q without var name prints all variables and their values
-        
+
         # Additional -v pretty-prints output
         if ($opt_v) {
             # Variable names in alphabetic order
             my @vars = sort {uc($a) cmp uc($b)} keys %config_vars;
-            
+
             # Make the left column as wide as the longest variable name
             my $width = 0;
             foreach (@vars) {
-                my $l = length $_; 
+                my $l = length $_;
                 $width = $l unless ($l <= $width);
             }
-    
+
             foreach (@vars) {
                 printf "%-${width}s = %s\n", $_, $config_vars{$_};
             }
@@ -434,7 +434,7 @@ if ($opt_c) {
 
     #   create link command
     my $o;
-    my $lo;	
+    my $lo;
     foreach $o (@objs) {
         $lo .= " $o";
     }
@@ -452,7 +452,6 @@ if ($opt_c) {
 
     my $ldflags = "$CFG_LDFLAGS";
     if ($opt_p == 1) {
-        
         my $apr_libs=`$apr_config --cflags --ldflags --link-libtool --libs`;
         chomp($apr_libs);
         my $apu_libs="";
@@ -460,7 +459,7 @@ if ($opt_c) {
             $apu_libs=`$apu_config --ldflags --link-libtool --libs`;
             chomp($apu_libs);
         }
-        
+
         $opt .= " ".$apu_libs." ".$apr_libs;
     }
     else {
@@ -501,9 +500,9 @@ if ($opt_i or $opt_e) {
         #  use .so unambigiously for installed shared library modules
         $t =~ s|\.[^./\\]+$|\.so|;
         if ($opt_i) {
-	    push(@cmds, "$installbuilddir/instdso.sh SH_LIBTOOL='" .
+            push(@cmds, "$installbuilddir/instdso.sh SH_LIBTOOL='" .
                  "$libtool' $f $CFG_LIBEXECDIR");
-	    push(@cmds, "chmod 755 $CFG_LIBEXECDIR/$t");
+            push(@cmds, "chmod 755 $CFG_LIBEXECDIR/$t");
         }
 
         #   determine module symbolname (if we're activating it)
@@ -645,7 +644,7 @@ if ($opt_i or $opt_e) {
             } else {
                 notice("unable to open configuration file");
             }
-	}
+        }
     }
 }
 
