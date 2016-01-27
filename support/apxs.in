@@ -506,35 +506,37 @@ if ($opt_i or $opt_e) {
 	    push(@cmds, "chmod 755 $CFG_LIBEXECDIR/$t");
         }
 
-        #   determine module symbolname
-        if ($name eq 'unknown') {
-            $name = '';
-            my $base = $f;
-            $base =~ s|\.[^.]+$||;
-            if (-f "$base.c") {
-                open(FP, "<$base.c");
-                my $content = join('', <FP>);
-                close(FP);
-                if ($content =~ m|.*AP_DECLARE_MODULE\s*\(\s*([a-zA-Z0-9_]+)\s*\)\s*=.*|s || $content =~ m|.*module\s+(?:AP_MODULE_DECLARE_DATA\s+)?([a-zA-Z0-9_]+)_module\s*=\s*.*|s) {
-                    $name = "$1";
+        #   determine module symbolname (if we're activating it)
+        if ($opt_a or $opt_A) {
+            if ($name eq 'unknown') {
+                $name = '';
+                my $base = $f;
+                $base =~ s|\.[^.]+$||;
+                if (-f "$base.c") {
+                    open(FP, "<$base.c");
+                    my $content = join('', <FP>);
+                    close(FP);
+                    if ($content =~ m|.*AP_DECLARE_MODULE\s*\(\s*([a-zA-Z0-9_]+)\s*\)\s*=.*|s || $content =~ m|.*module\s+(?:AP_MODULE_DECLARE_DATA\s+)?([a-zA-Z0-9_]+)_module\s*=\s*.*|s) {
+                        $name = "$1";
+                    }
+                }
+                if ($name eq '') {
+                    if ($base =~ m|.*mod_([a-zA-Z0-9_]+)|) {
+                        $name = "$1";
+                    }
+                }
+                if ($name eq '') {
+                    error("Sorry, cannot determine bootstrap symbol name");
+                    error("Please specify one with option `-n'");
+                    exit(1);
                 }
             }
-            if ($name eq '') {
-                if ($base =~ m|.*mod_([a-zA-Z0-9_]+)|) {
-                    $name = "$1";
-                }
-            }
-            if ($name eq '') {
-                error("Sorry, cannot determine bootstrap symbol name");
-                error("Please specify one with option `-n'");
-                exit(1);
-            }
+            my $dir = $CFG_LIBEXECDIR;
+            $dir =~ s|^$CFG_PREFIX/?||;
+            $dir =~ s|(.)$|$1/|;
+            $t =~ s|\.la$|.so|;
+            push(@lmd, sprintf("LoadModule %-18s %s", "${name}_module", "$dir$t"));
         }
-        my $dir = $CFG_LIBEXECDIR;
-        $dir =~ s|^$CFG_PREFIX/?||;
-        $dir =~ s|(.)$|$1/|;
-	$t =~ s|\.la$|.so|;
-        push(@lmd, sprintf("LoadModule %-18s %s", "${name}_module", "$dir$t"));
     }
 
     #   execute the commands
