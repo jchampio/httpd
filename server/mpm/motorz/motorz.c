@@ -526,7 +526,7 @@ static int motorz_setup_pollset(motorz_core_t *mz)
     int good_methods[] = {APR_POLLSET_KQUEUE, APR_POLLSET_PORT, APR_POLLSET_EPOLL};
     char *methods[] = {"kqueue", "port", "epoll"};
 
-    for (i = 0; i < sizeof(good_methods) / sizeof(void*); i++) {
+    for (i = 0; i < sizeof(good_methods) / sizeof(good_methods[0]); i++) {
         rv = apr_pollset_create_ex(&mz->pollset,
                                   512,
                                   mz->pool,
