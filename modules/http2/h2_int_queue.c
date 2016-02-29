@@ -27,7 +27,7 @@ static int tq_bubble_up(h2_int_queue *q, int i, int top,
 static int tq_bubble_down(h2_int_queue *q, int i, int bottom, 
                           h2_iq_cmp *cmp, void *ctx);
 
-h2_int_queue *h2_iq_create(apr_pool_t *pool, int capacity)
+HTTP2_DECLARE(h2_int_queue *) h2_iq_create(apr_pool_t *pool, int capacity)
 {
     h2_int_queue *q = apr_pcalloc(pool, sizeof(h2_int_queue));
     if (q) {
@@ -49,7 +49,7 @@ int h2_iq_size(h2_int_queue *q)
 }
 
 
-void h2_iq_add(h2_int_queue *q, int sid, h2_iq_cmp *cmp, void *ctx)
+HTTP2_DECLARE(void) h2_iq_add(h2_int_queue *q, int sid, h2_iq_cmp *cmp, void *ctx)
 {
     int i;
     
@@ -67,7 +67,7 @@ void h2_iq_add(h2_int_queue *q, int sid, h2_iq_cmp *cmp, void *ctx)
     }
 }
 
-int h2_iq_remove(h2_int_queue *q, int sid)
+HTTP2_DECLARE(int) h2_iq_remove(h2_int_queue *q, int sid)
 {
     int i;
     for (i = 0; i < q->nelts; ++i) {

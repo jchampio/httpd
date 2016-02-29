@@ -395,7 +395,7 @@ ENDIF()
 SET(mod_firehose_requires            SOMEONE_TO_MAKE_IT_COMPILE_ON_WINDOWS)
 SET(mod_heartbeat_extra_libs         mod_watchdog)
 SET(mod_http2_requires               NGHTTP2_FOUND)
-SET(mod_http2_extra_defines          ssize_t=long)
+SET(mod_http2_extra_defines          ssize_t=long HTTP2_DECLARE_EXPORT)
 SET(mod_http2_extra_libs             ${NGHTTP2_LIBRARIES})
 SET(mod_http2_extra_sources
   modules/http2/h2_alt_svc.c         modules/http2/h2_bucket_eoc.c
@@ -453,12 +453,11 @@ SET(mod_proxy_scgi_extra_libs        mod_proxy)
 SET(mod_proxy_wstunnel_extra_libs    mod_proxy)
 SET(mod_proxy_http2_requires               NGHTTP2_FOUND)
 SET(mod_proxy_http2_extra_defines          ssize_t=long)
-SET(mod_proxy_http2_extra_libs             ${NGHTTP2_LIBRARIES})
+SET(mod_proxy_http2_extra_libs             ${NGHTTP2_LIBRARIES} mod_proxy mod_http2)
 SET(mod_proxy_http2_extra_sources
   modules/http2/h2_proxy_session.c   modules/http2/h2_request.c
   modules/http2/h2_util.c
 )
-SET(mod_proxy_http2_extra_libs       mod_proxy)
 SET(mod_ratelimit_extra_defines      AP_RL_DECLARE_EXPORT)
 SET(mod_sed_extra_sources
   modules/filters/regexp.c           modules/filters/sed0.c
@@ -660,6 +659,7 @@ SET(HTTPD_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/dav/main
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/filters
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/generators
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/http2
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/proxy
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/session
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/ssl
@@ -683,6 +683,7 @@ SET(other_installed_h
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/filters/mod_xml2enc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/generators/mod_cgi.h
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/generators/mod_status.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/modules/http2/mod_http2.h
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/loggers/mod_log_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/mappers/mod_rewrite.h
   ${CMAKE_CURRENT_SOURCE_DIR}/modules/proxy/mod_proxy.h
@@ -785,8 +786,8 @@ FOREACH (mod ${MODULE_PATHS})
 
     # Extra defines?
     SET(mod_extra_defines "${mod_name}_extra_defines")
-    IF(NOT ${${mod_extra_defines}} STREQUAL "")
-      SET_TARGET_PROPERTIES(${mod_name} PROPERTIES COMPILE_DEFINITIONS ${${mod_extra_defines}})
+    IF(NOT "${${mod_extra_defines}}" STREQUAL "")
+      SET_TARGET_PROPERTIES(${mod_name} PROPERTIES COMPILE_DEFINITIONS "${${mod_extra_defines}}")
     ENDIF()
 
     # Extra includes?

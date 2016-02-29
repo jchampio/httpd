@@ -16,6 +16,8 @@
 #ifndef __mod_h2__h2_int_queue__
 #define __mod_h2__h2_int_queue__
 
+#include "mod_http2.h"
+
 /**
  * h2_int_queue keeps a list of sorted h2_task* in ascending order.
  */
@@ -48,7 +50,7 @@ typedef int h2_iq_cmp(int s1, int s2, void *ctx);
  * @param id the identifier of the queue
  * @param pool the memory pool
  */
-h2_int_queue *h2_iq_create(apr_pool_t *pool, int capacity);
+HTTP2_DECLARE(h2_int_queue *) h2_iq_create(apr_pool_t *pool, int capacity);
 
 /**
  * Return != 0 iff there are no tasks in the queue.
@@ -70,7 +72,7 @@ int h2_iq_size(h2_int_queue *q);
  * @param cmp the comparator for sorting
  * @param ctx user data for comparator 
  */
-void h2_iq_add(h2_int_queue *q, int sid, h2_iq_cmp *cmp, void *ctx);
+HTTP2_DECLARE(void) h2_iq_add(h2_int_queue *q, int sid, h2_iq_cmp *cmp, void *ctx);
 
 /**
  * Remove the stream id from the queue. Return != 0 iff task
@@ -79,7 +81,7 @@ void h2_iq_add(h2_int_queue *q, int sid, h2_iq_cmp *cmp, void *ctx);
  * @param sid the stream id to remove
  * @return != 0 iff task was found in queue
  */
-int h2_iq_remove(h2_int_queue *q, int sid);
+HTTP2_DECLARE(int) h2_iq_remove(h2_int_queue *q, int sid);
 
 /**
  * Remove all entries in the queue.

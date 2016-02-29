@@ -16,6 +16,30 @@
 #ifndef __MOD_HTTP2_H__
 #define __MOD_HTTP2_H__
 
+#include "httpd.h"
+#include "apr_optional.h"
+
+/* Create a set of HTTP2_DECLARE(type), HTTP2_DECLARE_NONSTD(type) and
+ * HTTP2_DECLARE_DATA with appropriate export and import tags for the platform
+ */
+#if !defined(WIN32)
+#define HTTP2_DECLARE(type)            type
+#define HTTP2_DECLARE_NONSTD(type)     type
+#define HTTP2_DECLARE_DATA
+#elif defined(HTTP2_DECLARE_STATIC)
+#define HTTP2_DECLARE(type)            type __stdcall
+#define HTTP2_DECLARE_NONSTD(type)     type
+#define HTTP2_DECLARE_DATA
+#elif defined(HTTP2_DECLARE_EXPORT)
+#define HTTP2_DECLARE(type)            __declspec(dllexport) type __stdcall
+#define HTTP2_DECLARE_NONSTD(type)     __declspec(dllexport) type
+#define HTTP2_DECLARE_DATA             __declspec(dllexport)
+#else
+#define HTTP2_DECLARE(type)            __declspec(dllimport) type __stdcall
+#define HTTP2_DECLARE_NONSTD(type)     __declspec(dllimport) type
+#define HTTP2_DECLARE_DATA             __declspec(dllimport)
+#endif
+
 /** The http2_var_lookup() optional function retrieves HTTP2 environment
  * variables. */
 APR_DECLARE_OPTIONAL_FN(char *, 

@@ -20,8 +20,14 @@
 
 #include <nghttp2/nghttp2.h>
 
-extern module AP_MODULE_DECLARE_DATA http2_module;
-
+/*
+ * Switch the APLOG module based on whether we are building mod_http2 or
+ * mod_proxy_http2.
+ */
+#if defined(HTTP2_DECLARE_EXPORT)
 APLOG_USE_MODULE(http2);
+#else
+APLOG_USE_MODULE(proxy_http2);
+#endif
 
 #endif
