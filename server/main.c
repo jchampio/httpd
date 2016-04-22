@@ -546,6 +546,9 @@ int main(int argc, const char * const argv[])
             /* Setting -D DUMP_MODULES is equivalent to setting -M */
             else if (strcmp(opt_arg, "DUMP_MODULES") == 0)
                 ap_run_mode = AP_SQ_RM_CONFIG_DUMP;
+            /* Setting -D DUMP_INCLUDES is a type of configuration dump */
+            else if (strcmp(opt_arg, "DUMP_INCLUDES") == 0)
+                ap_run_mode = AP_SQ_RM_CONFIG_DUMP;
             break;
 
         case 'e':
