@@ -31,7 +31,7 @@ AC_DEFUN([CHECK_LUA_PATH], [dnl
     fi
 ])
 
-dnl Check for Lua 5.2/5.1 Libraries
+dnl Check for Lua 5.3/5.2/5.1 Libraries
 dnl CHECK_LUA(ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND])
 dnl Sets:
 dnl  LUA_CFLAGS
@@ -41,7 +41,7 @@ AC_DEFUN([CHECK_LUA],
 
 AC_ARG_WITH(
     lua,
-    [AC_HELP_STRING([--with-lua=PATH],[Path to the Lua 5.2/5.1 prefix])],
+    [AC_HELP_STRING([--with-lua=PATH],[Path to the Lua 5.3/5.2/5.1 prefix])],
     lua_path="$withval",
     :)
 
@@ -55,6 +55,10 @@ fi
 AC_CHECK_LIB(m, pow, lib_m="-lm")
 AC_CHECK_LIB(m, sqrt, lib_m="-lm")
 for x in $test_paths ; do
+    CHECK_LUA_PATH([${x}], [include/lua-5.3], [lib/lua-5.3], [lua-5.3])
+    CHECK_LUA_PATH([${x}], [include/lua5.3], [lib], [lua5.3])
+    CHECK_LUA_PATH([${x}], [include/lua53], [lib/lua53], [lua])
+
     CHECK_LUA_PATH([${x}], [include/lua-5.2], [lib/lua-5.2], [lua-5.2])
     CHECK_LUA_PATH([${x}], [include/lua5.2], [lib], [lua5.2])
     CHECK_LUA_PATH([${x}], [include/lua52], [lib/lua52], [lua])
@@ -70,13 +74,13 @@ AC_SUBST(LUA_LIBS)
 AC_SUBST(LUA_CFLAGS)
 
 if test -z "${LUA_LIBS}"; then
-  AC_MSG_WARN([*** Lua 5.2 or 5.1 library not found.])
+  AC_MSG_WARN([[*** Lua 5.3, 5.2, or 5.1 library not found.]])
   ifelse([$2], ,
     enable_lua="no"
     if test -z "${lua_path}"; then
-        AC_MSG_WARN([Lua 5.2 or 5.1 library is required])
+        AC_MSG_WARN([[Lua 5.3, 5.2, or 5.1 library is required]])
     else
-        AC_MSG_ERROR([Lua 5.2 or 5.1 library is required])
+        AC_MSG_ERROR([[Lua 5.3, 5.2, or 5.1 library is required]])
     fi,
     $2)
 else
